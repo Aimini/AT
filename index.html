@@ -1,5 +1,6 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+    
     <style>
         #main {
 
@@ -86,9 +87,9 @@
             let nx = x + l * Math.sin(ang);
             let ny = y - l * Math.cos(ang);
             if (n > 0) {
-                let b = (Math.random() * 11 + 5) / 180 * Math.PI
-                let c = (Math.random() * 11 + 5) / 180 * Math.PI
-                let d = l * (Math.random() * 0.26 + 0.74)
+                let b = (Math.random() * 10 + 5) / 180 * Math.PI
+                let c = (Math.random() * 10 + 5) / 180 * Math.PI
+                let d = l * (Math.random() * 0.27 + 0.73)
                 ang = ang - b
                 node.right = new Node(0, 0, "NODE")
                 node.right.parent = node;
@@ -206,7 +207,7 @@
             can.height = document.body.offsetHeight
             can.fillStyle = 'rgba(255, 255, 255, 0)';
             root = new Node(0, 0, "ROOT");
-            tree(can.width / 2, can.height, root, 14, 250);
+            tree(can.width / 2, can.height, root, 14, 228);
 
             opentype.load('MU.ttf', function (err, font) {
                 if (err) {
@@ -289,7 +290,7 @@
                     ay = point.y + y
                     for (let si = 0; si < filter_flower.length; ++si) {
                         let one = filter_flower[si]
-                        var condition = ((Math.abs(ax - one.x) < 12) && (Math.abs(ay - one.y) < 12))
+                        var condition = ((Math.abs(ax - one.x) < 11) && (Math.abs(ay - one.y) < 11))
                         if (condition) {
                             find_closed = true;
                             break;
