@@ -86,9 +86,9 @@
             let nx = x + l * Math.sin(ang);
             let ny = y - l * Math.cos(ang);
             if (n > 0) {
-                let b = (Math.random() * 12 + 5) / 180 * Math.PI
-                let c = (Math.random() * 12 + 5) / 180 * Math.PI
-                let d = l * (Math.random() * 0.25 + 0.75)
+                let b = (Math.random() * 11 + 5) / 180 * Math.PI
+                let c = (Math.random() * 11 + 5) / 180 * Math.PI
+                let d = l * (Math.random() * 0.26 + 0.74)
                 ang = ang - b
                 node.right = new Node(0, 0, "NODE")
                 node.right.parent = node;
@@ -215,7 +215,12 @@
                     // Construct a Path object containing the letter shapes of the given text.
                     // The other parameters are x, y and fontSize.
                     // Note that y is the position of the baseline.
-                    var fontpath = font.getPath('言', 0, font_size, font_size + 10);
+                    let  query = window.location.search.substring(1);
+                    if(query != null && query.length != 0 )
+                        text = decodeURI(query);
+                    else 
+                        text='言'
+                    var fontpath = font.getPath(text, 0, font_size, font_size + 10);
                     let answer = checkTheBox()
                     if (answer != -1) {
 
@@ -228,10 +233,10 @@
                             var offsety = one.y - start.y;
 
                             if (ctx.isPointInPath(path, offsetx, offsety)) {
-                                ctx.strokeStyle = "#FF0000"
-                                ctx.arc(one.x, one.y, 7, 0, 2 * Math.PI, true);
+                                //ctx.strokeStyle = "#FF0000"
+                                //ctx.arc(one.x, one.y, 7, 0, 2 * Math.PI, true);
                                 one.mark_as_text = true;
-                                ctx.stroke();
+                                //ctx.stroke();
                             }
                         }
                     }
