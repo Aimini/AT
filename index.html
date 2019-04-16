@@ -1,0 +1,307 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+    <style>
+        #main {
+
+            margin: auto;
+            left: 0;
+            right: 0;
+            display: block;
+
+        }
+
+        body {
+            background: linear-gradient(to right, #2c3e50, #bdc3c7);
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            transition-duration: background 1s;
+            margin: 0;
+        }
+
+        #con0 {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to right, #746167, #fff3ef);
+            transition-duration: 3s;
+            opacity: 0;
+        }
+
+        body.final #con0 {
+
+
+            opacity: 1;
+        }
+    </style>
+    <script>
+        let can = null;
+        let ctx = null;
+        let final = false;
+
+
+        function Node(length, ang, type) {
+            this.parent = null;
+            this.length = length;
+            this.ang = ang;
+            this.type = type;
+            this.scale = 0;
+            this.left = null;
+            this.right = null;
+            this.cx = 0;
+            this.cy = 0;
+            this.x = 0;
+            this.y = 0;
+            this.n = 0;
+            this.mark_as_text = false;
+        }
+        function setColor(x) {
+            t = parseInt(x * 255);
+            ctx.strokeStyle = `rgba(${t},${t},${t})`;
+        }
+
+        function drawCricle() {
+
+        }
+
+        function drawLine() {
+            let t = Math.cos(ang + Math.PI / 8) / 8 + 0.20;
+            setColor(t)
+            ctx.lineWidth = n / 3;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+
+            let nx = x + l * Math.sin(ang);
+            let ny = y - l * Math.cos(ang);
+            ctx.lineTo(nx, ny);
+            ctx.stroke();
+        }
+
+        let ang = 0;
+        let flower_list = [];
+        let root = null;
+
+        function tree(x, y, node, n, l) {
+            node.length = l;
+            node.n = n;
+            let nx = x + l * Math.sin(ang);
+            let ny = y - l * Math.cos(ang);
+            if (n > 0) {
+                let b = (Math.random() * 12 + 5) / 180 * Math.PI
+                let c = (Math.random() * 12 + 5) / 180 * Math.PI
+                let d = l * (Math.random() * 0.25 + 0.75)
+                ang = ang - b
+                node.right = new Node(0, 0, "NODE")
+                node.right.parent = node;
+                node.right.ang = ang;
+                tree(nx, ny, node.right, n - 1, d)
+                ang = ang + b + c
+                node.left = new Node(0, 0, "NODE")
+                tree(nx, ny, node.left, n - 1, d)
+                node.left.parent = node;
+                node.left.ang = ang;
+                ang = ang - c
+            } else {
+                let n = Math.cos(ang - Math.PI / 8) / 2 + 0.7;
+                node.type = "FLOWER"
+                node.x = x + 4 * Math.sin(ang);
+                node.y = y + 4 * Math.cos(ang);
+                flower_list.push(node)
+            }
+        }
+
+        drawTime = 0;
+        function drawTree(x, y, node) {
+            if (node.scale < 0.7) {
+                if (node.type == "FLOWER")
+                    if (node.mark_as_text) {
+                        node.scale += 0.08;
+                    } else {
+                        node.scale += 0.02;
+                    }
+                else {
+
+                    node.scale += 0.04;
+                }
+            }
+            else if (node.scale < 0.9) {
+                if (node.type == "FLOWER")
+                    if (node.mark_as_text) {
+                        node.scale += 0.02;
+                    } else {
+                        node.scale += 0.01;
+                    }
+                else
+                    node.scale += 0.02;
+            }
+
+            else if (node.scale < 1) {
+                if (node.mark_as_text) {
+                    node.scale += 0.003;
+                } else {
+                    node.scale += 0.003;
+                }
+            }
+            else
+            {
+                node.scale = 1
+                if(node.type == "FLOWER" && node.mark_as_text == false)
+                    document.body.classList.add("final")
+            }
+            if (node.n != 0) {
+                let t = Math.cos(node.ang + Math.PI / 8) / 8 + 0.20;
+                setColor(t)
+                ctx.lineWidth = node.n / 3;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                let nx = x + node.length * node.scale * Math.sin(node.ang);
+                let ny = y - node.length * node.scale * Math.cos(node.ang);
+                ctx.lineTo(nx, ny);
+                ctx.stroke();
+
+
+                if (node.scale >= 0.7) {
+                    drawTree(nx, ny, node.left)
+                    drawTree(nx, ny, node.right)
+                }
+            } else {
+                let n = Math.cos(node.ang - Math.PI / 8) / 2 + 0.7;
+
+                let colorscale = (node.scale - 0.9) * 10;
+                if (colorscale < 0)
+                    colorscale = 0
+                let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n))
+                let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n))
+                ctx.strokeStyle = `rgba(${r},${g},${g})`;
+
+                let ra = 6;
+                ra *= node.scale;
+                let rx = x + ra * Math.sin(node.ang)
+                let ry = y + ra * Math.cos(node.ang)
+                ctx.beginPath();
+                ctx.arc(rx, ry, ra, 0, 2 * Math.PI, true);
+                ctx.stroke();
+            }
+
+        }
+
+
+        function drawFrame() {
+
+            if (drawTime > 0) {
+                can.width = document.body.offsetWidth
+                can.height = document.body.offsetHeight
+                drawTree(can.width / 2, can.height, root);
+                --drawTime;
+            }
+            window.requestAnimationFrame(drawFrame);
+        }
+
+
+        let fontpath = null;
+        let font_size = 260;
+        function load() {
+            can = document.getElementById("main");
+            ctx = can.getContext("2d");
+            can.width = document.body.offsetWidth
+            can.height = document.body.offsetHeight
+            can.fillStyle = 'rgba(255, 255, 255, 0)';
+            root = new Node(0, 0, "ROOT");
+            tree(can.width / 2, can.height, root, 14, 250);
+
+            opentype.load('MU.ttf', function (err, font) {
+                if (err) {
+                    alert('Font could not be loaded: ' + err);
+                } else {
+                    // Construct a Path object containing the letter shapes of the given text.
+                    // The other parameters are x, y and fontSize.
+                    // Note that y is the position of the baseline.
+                    var fontpath = font.getPath('言', 0, font_size, font_size + 10);
+                    let answer = checkTheBox()
+                    if (answer != -1) {
+
+                        start = answer[0]
+                        ponit = answer[1]
+                        for (one of ponit) {
+                            var path = new Path2D(fontpath.toPathData())
+                            ctx.beginPath();
+                            var offsetx = one.x - start.x;
+                            var offsety = one.y - start.y;
+
+                            if (ctx.isPointInPath(path, offsetx, offsety)) {
+                                ctx.strokeStyle = "#FF0000"
+                                ctx.arc(one.x, one.y, 7, 0, 2 * Math.PI, true);
+                                one.mark_as_text = true;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    else {
+                        window.location.reload()
+                    }
+
+                }
+            });
+
+            document.onclick = function(){
+                drawTime += 82;
+            }
+            drawFrame();
+        }
+
+        function checkTheBox() {
+            let x_min = can.width / 3;
+            let x_max = can.width * 2 / 3;
+            let one_filter_flower = []
+            for (let i = 0; i < flower_list.length; ++i) {
+                if (flower_list[i].x > x_min && flower_list[i].x < x_max)
+                    one_filter_flower.push(flower_list[i])
+
+            }
+            for (let i = 0; i < one_filter_flower.length; ++i) {
+                let sp = one_filter_flower[i];
+                let x = 0
+                let y = 0
+                filter_flower = []
+                for (let si = 0; si < one_filter_flower.length; ++si) {
+                    let one = one_filter_flower[si]
+                    if (one.x > sp.x - 4 && one.x < sp.x + font_size + 4 && one.y > sp.y - 4 && one.y < sp.y + font_size + 4)
+                        filter_flower.push(one)
+                }
+
+                if (allFind(one_filter_flower[i], filter_flower)) {
+                    let sp = one_filter_flower[i];
+                    return [sp, filter_flower]
+                }
+            }
+            return -1;
+        }
+
+        function allFind(point, flower_list) {
+            for (let x = 0; x < font_size; x += 9) {
+                for (let y = 0; y < font_size; y += 9) {
+                    find_closed = false
+                    ax = point.x + x
+                    ay = point.y + y
+                    for (let si = 0; si < filter_flower.length; ++si) {
+                        let one = filter_flower[si]
+                        var condition = ((Math.abs(ax - one.x) < 12) && (Math.abs(ay - one.y) < 12))
+                        if (condition) {
+                            find_closed = true;
+                            break;
+                        }
+                    }
+                    if (find_closed == false)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+
+    </script>
+</head>
+
+<body onload="load()">
+    <div id="con0"></div>
+    <canvas id="main"></canvas>
+</body>
