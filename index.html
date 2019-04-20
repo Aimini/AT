@@ -38,7 +38,20 @@
         let can = null;
         let ctx = null;
         let final = false;
-
+        function IsPC() {
+        var userAgentInfo = navigator.userAgent;
+        var Agents = ["Android", "iPhone",
+                    "SymbianOS", "Windows Phone",
+                    "iPad", "iPod"];
+        var flag = true;
+        for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
 
         function Node(length, ang, type) {
             this.parent = null;
@@ -80,15 +93,16 @@
         let ang = 0;
         let flower_list = [];
         let root = null;
-
+        let flower_r = 6;
+        let split_ang =  10;
         function tree(x, y, node, n, l) {
             node.length = l;
             node.n = n;
             let nx = x + l * Math.sin(ang);
             let ny = y - l * Math.cos(ang);
             if (n > 0) {
-                let b = (Math.random() * 10 + 5) / 180 * Math.PI
-                let c = (Math.random() * 10 + 5) / 180 * Math.PI
+                let b = (Math.random() * split_ang + 5) / 180 * Math.PI
+                let c = (Math.random() * split_ang + 5) / 180 * Math.PI
                 let d = l * (Math.random() * 0.27 + 0.73)
                 ang = ang - b
                 node.right = new Node(0, 0, "NODE")
@@ -104,8 +118,8 @@
             } else {
                 let n = Math.cos(ang - Math.PI / 8) / 2 + 0.7;
                 node.type = "FLOWER"
-                node.x = x + 4 * Math.sin(ang);
-                node.y = y + 4 * Math.cos(ang);
+                node.x = x + flower_r * Math.sin(ang);
+                node.y = y + flower_r * Math.cos(ang);
                 flower_list.push(node)
             }
         }
@@ -174,12 +188,12 @@
                 let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n))
                 ctx.strokeStyle = `rgba(${r},${g},${g})`;
 
-                let ra = 6;
+                let ra = flower_r;
                 ra *= node.scale;
                 let rx = x + ra * Math.sin(node.ang)
                 let ry = y + ra * Math.cos(node.ang)
                 ctx.beginPath();
-                ctx.arc(rx, ry, ra, 0, 2 * Math.PI, true);
+                ctx.arc(rx, ry, ra, 0, 2 * Math.PI);
                 ctx.stroke();
             }
 
@@ -205,31 +219,41 @@
             ctx = can.getContext("2d");
             can.width = document.body.offsetWidth
             can.height = document.body.offsetHeight
+
+
             can.fillStyle = 'rgba(255, 255, 255, 0)';
             root = new Node(0, 0, "ROOT");
-            tree(can.width / 2, can.height, root, 14, 228);
+
+            let init_lentgth = 228;
+            if(IsPC()){
+                font_size /= 2;
+                init_lentgth = can.width/14;
+                flower_r /= 2;
+                split_ang*=2;
+            }
+            tree(can.width / 2, can.height, root, 14, init_lentgth);
 
 
-                    let answer = checkTheBox()
-                    if (answer != -1) {
-                        start = answer[0]
-                        ponit = answer[1]
-                        var path = new Path2D("M251.15 62.91L251.15 80.70Q133.55 79.25 23.47 95.34L23.47 95.34Q25.05 80.83 29.53 77.67Q34.01 74.51 126.30 67.52L126.30 67.52Q123.13 58.95 116.67 48.27L116.67 48.27L135.53 40.49Q147.92 57.10 147.92 61.85L147.92 61.85Q147.92 63.70 146.07 65.81L146.07 65.81Q236.78 63.17 251.15 62.91L251.15 62.91ZM214.63 103.64L215.42 120.39Q126.17 121.31 58.27 131.46L58.27 131.46Q58.27 123.95 60.97 119.53Q63.68 115.11 67.10 113.53Q70.53 111.95 97.56 109.38Q124.58 106.81 155.30 105.62L155.30 105.62L214.63 103.64ZM214.63 159.54L214.63 159.54Q128.80 159.54 56.95 172.72L56.95 172.72Q57.74 160.33 62.82 156.38Q67.90 152.42 115.09 148.20Q162.29 143.98 214.10 143.06L214.10 143.06Q214.63 151.89 214.63 159.54ZM225.97 263.30L225.97 263.30Q199.47 262.24 177.32 262.24L177.32 262.24Q112.06 262.24 48.12 271.34L48.12 271.34Q49.83 231.39 53.53 213.07L53.53 213.07Q45.48 214.38 42.71 215.18L42.71 215.18Q41.66 208.19 44.56 202.85Q47.46 197.51 53.26 195.47Q59.06 193.42 103.16 189.01Q147.26 184.59 182.99 184.59L182.99 184.59Q198.94 184.59 205.14 187.62Q211.33 190.65 216.15 196.85Q220.96 203.05 223.66 221.11Q226.36 239.17 225.97 263.30ZM205.14 246.03L205.14 246.03Q205.14 220.84 202.83 213.00Q200.52 205.16 196.44 203.11Q192.35 201.07 179.69 201.07L179.69 201.07Q131.57 201.07 72.64 209.77L72.64 209.77Q68.82 231.00 68.82 251.96L68.82 251.96Q125.64 245.63 182.07 245.63L182.07 245.63Q193.67 245.63 205.14 246.03Z")
-                        for (one of ponit) {
-                            ctx.beginPath();
-                            var offsetx = one.x - start.x;
-                            var offsety = one.y - start.y;
-                            if (ctx.isPointInPath(path, offsetx, offsety)) {
-                                //ctx.strokeStyle = "#FF0000"
-                                //ctx.arc(one.x, one.y, 7, 0, 2 * Math.PI, true);
-                                one.mark_as_text = true;
-                                //ctx.stroke();
-                            }
-                        }
+            let answer = checkTheBox()
+            if (answer != -1) {
+                start = answer[0]
+                ponit = answer[1]
+                var path = new Path2D("M251.15 62.91L251.15 80.70Q133.55 79.25 23.47 95.34L23.47 95.34Q25.05 80.83 29.53 77.67Q34.01 74.51 126.30 67.52L126.30 67.52Q123.13 58.95 116.67 48.27L116.67 48.27L135.53 40.49Q147.92 57.10 147.92 61.85L147.92 61.85Q147.92 63.70 146.07 65.81L146.07 65.81Q236.78 63.17 251.15 62.91L251.15 62.91ZM214.63 103.64L215.42 120.39Q126.17 121.31 58.27 131.46L58.27 131.46Q58.27 123.95 60.97 119.53Q63.68 115.11 67.10 113.53Q70.53 111.95 97.56 109.38Q124.58 106.81 155.30 105.62L155.30 105.62L214.63 103.64ZM214.63 159.54L214.63 159.54Q128.80 159.54 56.95 172.72L56.95 172.72Q57.74 160.33 62.82 156.38Q67.90 152.42 115.09 148.20Q162.29 143.98 214.10 143.06L214.10 143.06Q214.63 151.89 214.63 159.54ZM225.97 263.30L225.97 263.30Q199.47 262.24 177.32 262.24L177.32 262.24Q112.06 262.24 48.12 271.34L48.12 271.34Q49.83 231.39 53.53 213.07L53.53 213.07Q45.48 214.38 42.71 215.18L42.71 215.18Q41.66 208.19 44.56 202.85Q47.46 197.51 53.26 195.47Q59.06 193.42 103.16 189.01Q147.26 184.59 182.99 184.59L182.99 184.59Q198.94 184.59 205.14 187.62Q211.33 190.65 216.15 196.85Q220.96 203.05 223.66 221.11Q226.36 239.17 225.97 263.30ZM205.14 246.03L205.14 246.03Q205.14 220.84 202.83 213.00Q200.52 205.16 196.44 203.11Q192.35 201.07 179.69 201.07L179.69 201.07Q131.57 201.07 72.64 209.77L72.64 209.77Q68.82 231.00 68.82 251.96L68.82 251.96Q125.64 245.63 182.07 245.63L182.07 245.63Q193.67 245.63 205.14 246.03Z")
+                for (one of ponit) {
+                    ctx.beginPath();
+                    var offsetx = one.x - start.x;
+                    var offsety = one.y - start.y;
+                    if (ctx.isPointInPath(path, offsetx*260/font_size, offsety*260/font_size)) {
+                        //ctx.strokeStyle = "#FF0000"
+                        //ctx.arc(one.x, one.y, flower_r, 0, 2 * Math.PI, true);
+                        one.mark_as_text = true;
+                        //ctx.stroke();
                     }
-                    else {
-                        window.location.reload()
-                    }
+                }
+            }
+            else {
+                window.location.reload()
+            }
 
                 
 
@@ -268,14 +292,14 @@
         }
 
         function allFind(point, flower_list) {
-            for (let x = 0; x < font_size; x += 9) {
-                for (let y = 0; y < font_size; y += 9) {
+            for (let x = 0; x < font_size; x += font_size*9/260) {
+                for (let y = 0; y < font_size; y += font_size*9/260) {
                     find_closed = false
                     ax = point.x + x
                     ay = point.y + y
                     for (let si = 0; si < filter_flower.length; ++si) {
                         let one = filter_flower[si]
-                        var condition = ((Math.abs(ax - one.x) < 11) && (Math.abs(ay - one.y) < 11))
+                        var condition = ((Math.abs(ax - one.x) <  font_size*10/260) && (Math.abs(ay - one.y) < font_size*10/260))
                         if (condition) {
                             find_closed = true;
                             break;
