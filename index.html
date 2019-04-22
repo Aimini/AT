@@ -243,7 +243,7 @@ ctx.stroke();
             can.fillStyle = 'rgba(255, 255, 255, 0)';
             root = new Node(0, 0, "ROOT");
 
-            let init_lentgth = 228;
+            let init_lentgth = 210;
             if(IsPC()){
                 font_size /= 1.9;
                 init_lentgth = can.width/13.8;
@@ -263,10 +263,10 @@ ctx.stroke();
                     var offsetx = one.x - start.x;
                     var offsety = one.y - start.y;
                     if (ctx.isPointInPath(path, offsetx*260/font_size, offsety*260/font_size)) {
-                        ctx.strokeStyle = "#FF0000"
-                        ctx.arc(one.x, one.y, flower_r, 0, 2 * Math.PI, true);
+                        //ctx.strokeStyle = "#FF0000"
+                        //ctx.arc(one.x, one.y, flower_r, 0, 2 * Math.PI, true);
                         one.mark_as_text = true;
-                        ctx.stroke();
+                       // ctx.stroke();
                     }
                 }
             }
