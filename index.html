@@ -76,10 +76,10 @@
             this.mark_as_text = false;
         }
         function setColor(x) {
-            t = parseInt(x * 255).toString(16);
+            t = parseInt(x * 255);
             if (t.length < 2)
                         t = '0' + t
-            ctx.strokeStyle = `#${t}${t}${t}`;
+            ctx.strokeStyle = `rgb(${t},${t},${t})`;
         }
 
         function drawCricle() {
@@ -205,13 +205,11 @@
                     let colorscale = (node.scale - 0.9) * 10;
                     if (colorscale < 0)
                         colorscale = 0
-                    let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n)).toString(16)
-                    if (r.length < 2)
-                        r = '0' + r
-                    let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n)).toString(16)
-                    if (g.length < 2)
-                        g = '0' + g
-                    ctx.strokeStyle = `#${r}${g}${g}`;
+                    let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n))
+           
+                    let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n))
+                
+                    ctx.strokeStyle = `rgb(${r},${g},${g})`;
 
                     let ra = flower_r;
                     ra *= node.scale;
