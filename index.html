@@ -125,6 +125,7 @@
         }
 
         drawTime = 0;
+        
         function drawTree(x, y, node) {
             if (node.scale < 0.7) {
                 if (node.type == "FLOWER")
@@ -165,7 +166,7 @@
             if (node.n != 0) {
                 let t = Math.cos(node.ang + Math.PI / 8) / 8 + 0.20;
                 setColor(t)
-                ctx.lineWidth = node.n / 3;
+                ctx.lineWidth = node.n / 3*node.scale;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 let nx = x + node.length * node.scale * Math.sin(node.ang);
@@ -179,24 +180,37 @@
                     drawTree(nx, ny, node.right)
                 }
             } else {
-                let n = Math.cos(node.ang - Math.PI / 8) / 2 + 0.7;
-
-                let colorscale = (node.scale - 0.9) * 10;
-                if (colorscale < 0)
-                    colorscale = 0
-                let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n))
-                let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n))
-                ctx.strokeStyle = `rgba(${r},${g},${g})`;
-
                 let ra = flower_r;
                 ra *= node.scale;
                 let rx = x + ra * Math.sin(node.ang)
                 let ry = y + ra * Math.cos(node.ang)
-                ctx.beginPath();
-                ctx.arc(rx, ry, ra, 0, 2 * Math.PI);
-                ctx.stroke();
+                node.cx = rx;
+                node.cy = ry;
             }
+        }
 
+        function drawFlower()
+        {
+            for(node of flower_list){
+                if(node.scale > 0){
+                    let n = Math.cos(node.ang - Math.PI / 8) / 2 + 0.7;
+
+let colorscale = (node.scale - 0.9) * 10;
+if (colorscale < 0)
+    colorscale = 0
+let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n))
+let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n))
+ctx.strokeStyle = `rgba(${r},${g},${g})`;
+
+let ra = flower_r;
+ra *= node.scale;
+
+ctx.beginPath();
+ctx.arc(node.cx, node.cy, ra, 0, 2 * Math.PI);
+ctx.stroke();
+                }
+               
+            }
         }
 
 
@@ -206,6 +220,7 @@
                 can.width = document.body.offsetWidth
                 can.height = document.body.offsetHeight
                 drawTree(can.width / 2, can.height, root);
+                drawFlower();
                 --drawTime;
             }
             window.requestAnimationFrame(drawFrame);
@@ -226,7 +241,7 @@
 
             let init_lentgth = 228;
             if(IsPC()){
-                font_size /= 2;
+                font_size /= 1.9;
                 init_lentgth = can.width/14;
                 flower_r /= 2;
                 split_ang*=2;
