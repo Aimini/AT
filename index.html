@@ -1,7 +1,11 @@
+<!DOCTYPE html>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>-->
     
     <style>
+        html,body{
+            height: 100%;
+        }
         #main {
 
             margin: auto;
@@ -69,8 +73,8 @@
             this.mark_as_text = false;
         }
         function setColor(x) {
-            t = parseInt(x * 255);
-            ctx.strokeStyle = `rgba(${t},${t},${t})`;
+            t = parseInt(x * 255).toString(16);
+            ctx.strokeStyle = `#${t}${t}${t}`;
         }
 
         function drawCricle() {
@@ -198,9 +202,9 @@
 let colorscale = (node.scale - 0.9) * 10;
 if (colorscale < 0)
     colorscale = 0
-let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n))
-let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n))
-ctx.strokeStyle = `rgba(${r},${g},${g})`;
+let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n)).toString(16)
+let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n)).toString(16)
+ctx.strokeStyle = `#${r}${g}${g}`;
 
 let ra = flower_r;
 ra *= node.scale;
@@ -242,7 +246,7 @@ ctx.stroke();
             let init_lentgth = 228;
             if(IsPC()){
                 font_size /= 1.9;
-                init_lentgth = can.width/14;
+                init_lentgth = can.width/13.8;
                 flower_r /= 2;
                 split_ang*=2;
             }
@@ -259,10 +263,10 @@ ctx.stroke();
                     var offsetx = one.x - start.x;
                     var offsety = one.y - start.y;
                     if (ctx.isPointInPath(path, offsetx*260/font_size, offsety*260/font_size)) {
-                        //ctx.strokeStyle = "#FF0000"
-                        //ctx.arc(one.x, one.y, flower_r, 0, 2 * Math.PI, true);
+                        ctx.strokeStyle = "#FF0000"
+                        ctx.arc(one.x, one.y, flower_r, 0, 2 * Math.PI, true);
                         one.mark_as_text = true;
-                        //ctx.stroke();
+                        ctx.stroke();
                     }
                 }
             }
@@ -271,8 +275,12 @@ ctx.stroke();
             }
 
                 
-
+            if(IsPC())
             document.body.onclick = function(){
+                drawTime += 82;
+            }
+            else
+            document.body.ontouchend = function(){
                 drawTime += 82;
             }
             drawFrame();
