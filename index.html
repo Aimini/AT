@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <head>
     <!--<script src="https://cdn.jsdelivr.net/npm/opentype.js@latest/dist/opentype.min.js"></script>-->
-    
+
     <style>
-        html,body{
+        html,
+        body {
             height: 100%;
         }
+
         #main {
 
             margin: auto;
@@ -43,19 +46,19 @@
         let ctx = null;
         let final = false;
         function IsPC() {
-        var userAgentInfo = navigator.userAgent;
-        var Agents = ["Android", "iPhone",
-                    "SymbianOS", "Windows Phone",
-                    "iPad", "iPod"];
-        var flag = true;
-        for (var v = 0; v < Agents.length; v++) {
-            if (userAgentInfo.indexOf(Agents[v]) > 0) {
-                flag = false;
-                break;
+            var userAgentInfo = navigator.userAgent;
+            var Agents = ["Android", "iPhone",
+                "SymbianOS", "Windows Phone",
+                "iPad", "iPod"];
+            var flag = true;
+            for (var v = 0; v < Agents.length; v++) {
+                if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                    flag = false;
+                    break;
+                }
             }
+            return flag;
         }
-        return flag;
-    }
 
         function Node(length, ang, type) {
             this.parent = null;
@@ -74,6 +77,8 @@
         }
         function setColor(x) {
             t = parseInt(x * 255).toString(16);
+            if (t.length < 2)
+                        t = '0' + t
             ctx.strokeStyle = `#${t}${t}${t}`;
         }
 
@@ -98,7 +103,7 @@
         let flower_list = [];
         let root = null;
         let flower_r = 6;
-        let split_ang =  10;
+        let split_ang = 10;
         function tree(x, y, node, n, l) {
             node.length = l;
             node.n = n;
@@ -129,7 +134,7 @@
         }
 
         drawTime = 0;
-        
+
         function drawTree(x, y, node) {
             if (node.scale < 0.7) {
                 if (node.type == "FLOWER")
@@ -161,16 +166,15 @@
                     node.scale += 0.003;
                 }
             }
-            else
-            {
+            else {
                 node.scale = 1
-                if(node.type == "FLOWER" && node.mark_as_text == false)
+                if (node.type == "FLOWER" && node.mark_as_text == false)
                     document.body.classList.add("final")
             }
             if (node.n != 0) {
                 let t = Math.cos(node.ang + Math.PI / 8) / 8 + 0.20;
                 setColor(t)
-                ctx.lineWidth = node.n / 3*node.scale;
+                ctx.lineWidth = node.n / 3 * node.scale;
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 let nx = x + node.length * node.scale * Math.sin(node.ang);
@@ -193,27 +197,30 @@
             }
         }
 
-        function drawFlower()
-        {
-            for(node of flower_list){
-                if(node.scale > 0){
+        function drawFlower() {
+            for (node of flower_list) {
+                if (node.scale > 0) {
                     let n = Math.cos(node.ang - Math.PI / 8) / 2 + 0.7;
 
-let colorscale = (node.scale - 0.9) * 10;
-if (colorscale < 0)
-    colorscale = 0
-let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n)).toString(16)
-let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n)).toString(16)
-ctx.strokeStyle = `#${r}${g}${g}`;
+                    let colorscale = (node.scale - 0.9) * 10;
+                    if (colorscale < 0)
+                        colorscale = 0
+                    let r = parseInt(255 * ((-n * 0.5 + 0.5) * colorscale + n)).toString(16)
+                    if (r.length < 2)
+                        r = '0' + r
+                    let g = parseInt(255 * ((n * 0.35 + 0.35 - n) * colorscale + n)).toString(16)
+                    if (g.length < 2)
+                        g = '0' + g
+                    ctx.strokeStyle = `#${r}${g}${g}`;
 
-let ra = flower_r;
-ra *= node.scale;
+                    let ra = flower_r;
+                    ra *= node.scale;
 
-ctx.beginPath();
-ctx.arc(node.cx, node.cy, ra, 0, 2 * Math.PI);
-ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(node.cx, node.cy, ra, 0, 2 * Math.PI);
+                    ctx.stroke();
                 }
-               
+
             }
         }
 
@@ -244,11 +251,11 @@ ctx.stroke();
             root = new Node(0, 0, "ROOT");
 
             let init_lentgth = 210;
-            if(IsPC()){
+            if (IsPC()) {
                 font_size /= 1.9;
-                init_lentgth = can.width/13.8;
+                init_lentgth = can.width / 13.8;
                 flower_r /= 2;
-                split_ang*=2;
+                split_ang *= 2;
             }
             tree(can.width / 2, can.height, root, 14, init_lentgth);
 
@@ -262,11 +269,11 @@ ctx.stroke();
                     ctx.beginPath();
                     var offsetx = one.x - start.x;
                     var offsety = one.y - start.y;
-                    if (ctx.isPointInPath(path, offsetx*260/font_size, offsety*260/font_size)) {
+                    if (ctx.isPointInPath(path, offsetx * 260 / font_size, offsety * 260 / font_size)) {
                         //ctx.strokeStyle = "#FF0000"
                         //ctx.arc(one.x, one.y, flower_r, 0, 2 * Math.PI, true);
                         one.mark_as_text = true;
-                       // ctx.stroke();
+                        //ctx.stroke();
                     }
                 }
             }
@@ -274,15 +281,15 @@ ctx.stroke();
                 window.location.reload()
             }
 
-                
-            if(IsPC())
-            document.body.onclick = function(){
-                drawTime += 82;
-            }
+
+            if (IsPC())
+                document.body.onclick = function () {
+                    drawTime += 82;
+                }
             else
-            document.body.ontouchend = function(){
-                drawTime += 82;
-            }
+                document.body.ontouchend = function () {
+                    drawTime += 82;
+                }
             drawFrame();
         }
 
@@ -315,14 +322,14 @@ ctx.stroke();
         }
 
         function allFind(point, flower_list) {
-            for (let x = 0; x < font_size; x += font_size*9/260) {
-                for (let y = 0; y < font_size; y += font_size*9/260) {
+            for (let x = 0; x < font_size; x += font_size * 9 / 260) {
+                for (let y = 0; y < font_size; y += font_size * 9 / 260) {
                     find_closed = false
                     ax = point.x + x
                     ay = point.y + y
                     for (let si = 0; si < filter_flower.length; ++si) {
                         let one = filter_flower[si]
-                        var condition = ((Math.abs(ax - one.x) <  font_size*10/260) && (Math.abs(ay - one.y) < font_size*10/260))
+                        var condition = ((Math.abs(ax - one.x) < font_size * 10 / 260) && (Math.abs(ay - one.y) < font_size * 10 / 260))
                         if (condition) {
                             find_closed = true;
                             break;
